@@ -48,6 +48,7 @@ async function loadVideos() {
 }
 
 function handleClick(id) {
+  sessionStorage.setItem('videoId', id);
   window.location.href = 'go.html?id=' + id;
 }
 
