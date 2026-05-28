@@ -1,11 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -53,6 +55,10 @@ app.get('/api/stats', async (req, res) => {
   const total = await Video.countDocuments();
   const views = await Video.aggregate([{ $group: { _id: null, total: { $sum: '$views' } } }]);
   res.json({ totalVideos: total, totalViews: views[0]?.total || 0 });
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 const PORT = process.env.PORT || 3000;
