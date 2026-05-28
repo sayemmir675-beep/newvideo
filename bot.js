@@ -1,12 +1,14 @@
 const TelegramBot = require('node-telegram-bot-api');
 const mongoose = require('mongoose');
 
-const Video = mongoose.model('Video');
-
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 const ADMIN_ID = parseInt(process.env.ADMIN_ID);
 
 let waitingFor = {};
+
+function getVideo() {
+  return mongoose.model('Video');
+}
 
 bot.onText(/\/start/, (msg) => {
   if (msg.chat.id !== ADMIN_ID) return bot.sendMessage(msg.chat.id, '❌ Not authorized');
@@ -15,6 +17,7 @@ bot.onText(/\/start/, (msg) => {
 
 bot.onText(/\/stats/, async (msg) => {
   if (msg.chat.id !== ADMIN_ID) return;
+  const Video = getVideo();
   const total = await Video.countDocuments();
   const views = await Video.aggregate([{ $group: { _id: null, total: { $sum: '$views' } } }]);
   bot.sendMessage(msg.chat.id, `📊 Stats:\n🎬 Total Videos: ${total}\n👁 Total Views: ${views[0]?.total || 0}`);
@@ -28,6 +31,7 @@ bot.onText(/\/add/, (msg) => {
 
 bot.onText(/\/list/, async (msg) => {
   if (msg.chat.id !== ADMIN_ID) return;
+  const Video = getVideo();
   const videos = await Video.find().sort({ createdAt: -1 }).limit(10);
   if (videos.length === 0) return bot.sendMessage(msg.chat.id, 'No videos yet.');
   let text = '🎬 Last 10 videos:\n\n';
@@ -46,30 +50,43 @@ bot.onText(/\/delete/, (msg) => {
 bot.on('message', async (msg) => {
   const chatId = msg.chat.id;
   if (chatId !== ADMIN_ID) return;
-  if (!waitingFor[chatId] || msg.text?.startsWith('/')) return;
+  if (!waitingFor[chatId]) return;
+  if (msg.text && msg.text.startsWith('/')) return;
 
   const state = waitingFor[chatId];
 
-  if (state.step === 'title') {
-    waitingFor[chatId] = { step: 'iframe', title: msg.text };
-    bot.sendMessage(chatId, '🔗 Now send the *iframe URL* (just the src link, not full iframe tag):', { parse_mode: 'Markdown' });
-  } else if (state.step === 'iframe') {
-    waitingFor[chatId] = { step: 'thumbnail', title: state.title, iframe: msg.text };
-    bot.sendMessage(chatId, '🖼 Now send the *thumbnail image URL*:', { parse_mode: 'Markdown' });
- } else if (state.step === 'iframe') {
-    let iframeUrl = msg.text;
-    const srcMatch = msg.text.match(/src=["']([^"']+)["']/i);
-    if (srcMatch) iframeUrl = srcMatch[1];
-    waitingFor[chatId] = { step: 'thumbnail', title: state.title, iframe: iframeUrl };
-    bot.sendMessage(chatId, '🖼 Now send the *thumbnail image URL*:', { parse_mode: 'Markdown' });
-  } else if (state.step === 'delete_id') {
-    try {
+  try {
+    if (state.step === 'title') {
+      waitingFor[chatId] = { step: 'iframe', title: msg.text };
+      bot.sendMessage(chatId, '🔗 Now send the *iframe URL* or full iframe tag:', { parse_mode: 'Markdown' });
+
+    } else if (state.step === 'iframe') {
+      let iframeUrl = msg.text;
+      const srcMatch = msg.text.match(/src=["']([^"']+)["']/i);
+      if (srcMatch) iframeUrl = srcMatch[1];
+      waitingFor[chatId] = { step: 'thumbnail', title: state.title, iframe: iframeUrl };
+      bot.sendMessage(chatId, '🖼 Now send the *thumbnail image URL*:', { parse_mode: 'Markdown' });
+
+    } else if (state.step === 'thumbnail') {
+      const Video = getVideo();
+      const video = new Video({
+        title: state.title,
+        iframe: state.iframe,
+        thumbnail: msg.text
+      });
+      await video.save();
+      delete waitingFor[chatId];
+      bot.sendMessage(chatId, `✅ Video added!\n\n🎬 *${state.title}*`, { parse_mode: 'Markdown' });
+
+    } else if (state.step === 'delete_id') {
+      const Video = getVideo();
       await Video.findByIdAndDelete(msg.text.trim());
       delete waitingFor[chatId];
       bot.sendMessage(chatId, '✅ Video deleted!');
-    } catch (e) {
-      bot.sendMessage(chatId, '❌ Invalid ID. Try again.');
     }
+  } catch (e) {
+    bot.sendMessage(chatId, '❌ Error: ' + e.message);
+    delete waitingFor[chatId];
   }
 });
 
