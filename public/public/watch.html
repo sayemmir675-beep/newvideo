@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Watch - NewVideo</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0f0f0f; color: #fff; font-family: Arial, sans-serif; }
+header { background: #1a1a1a; padding: 15px 20px; }
+header a { color: #ff4444; text-decoration: none; font-size: 20px; font-weight: bold; }
+.player-wrap { max-width: 900px; margin: 20px auto; padding: 0 15px; }
+.player { position: relative; padding-bottom: 56.25%; height: 0; background: #000; border-radius: 8px; overflow: hidden; }
+.player iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+.info { max-width: 900px; margin: 15px auto; padding: 0 15px; }
+.info h1 { font-size: 20px; margin-bottom: 8px; }
+.info span { color: #888; font-size: 14px; }
+.back-btn { display: inline-block; margin-top: 15px; color: #ff4444; text-decoration: none; }
+.loading { text-align: center; padding: 100px; color: #888; }
+</style>
+</head>
+<body>
+<header><a href="index.html">🎬 NewVideo</a></header>
+<div id="content">
+  <div class="loading">Loading video...</div>
+</div>
+<script>
+const API = 'https://newvideo-backend-inuf.onrender.com';
+
+async function loadVideo() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  if (!id) {
+    window.location.href = 'index.html';
+    return;
+  }
+  const res = await fetch(API + '/api/videos/' + id);
+  const video = await res.json();
+  document.title = video.title + ' - NewVideo';
+  document.getElementById('content').innerHTML = `
+    <div class="player-wrap">
+      <div class="player">
+        <iframe src="${video.iframe}" allowfullscreen allow="autoplay"></iframe>
+      </div>
+    </div>
+    <div class="info">
+      <h1>${video.title}</h1>
+      <span>👁 ${video.views} views</span>
+      <br>
+      <a class="back-btn" href="index.html">← Back to Home</a>
+    </div>
+  `;
+}
+
+loadVideo();
+</script>
+</body>
+</html>
