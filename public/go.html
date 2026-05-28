@@ -4,21 +4,113 @@
 <meta charset="UTF-8">
 <title>Please wait...</title>
 <style>
-body { background: #0f0f0f; color: #fff; font-family: Arial; text-align: center; padding-top: 100px; }
-h2 { color: #ff4444; }
-p { color: #888; margin-top: 10px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0f0f0f; color: #fff; font-family: Arial; }
+
+.popup-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.popup {
+  background: #1a1a1a;
+  border: 2px solid #ff4444;
+  border-radius: 12px;
+  padding: 35px 40px;
+  text-align: center;
+  max-width: 340px;
+  width: 90%;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.popup h2 {
+  color: #ff4444;
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.popup p {
+  color: #aaa;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+.countdown-circle {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #ff4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 36px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.bar-wrap {
+  background: #333;
+  border-radius: 99px;
+  height: 8px;
+  overflow: hidden;
+  margin-top: 15px;
+}
+
+.bar {
+  height: 100%;
+  background: #ff4444;
+  border-radius: 99px;
+  width: 100%;
+  transition: width 1s linear;
+}
 </style>
 </head>
 <body>
-<h2>Please wait...</h2>
-<p>You will be redirected to the video shortly.</p>
+
+<div class="popup-overlay">
+  <div class="popup">
+    <h2>🎬 Video Loading</h2>
+    <p>Please wait while we prepare your video...</p>
+    <div class="countdown-circle" id="num">5</div>
+    <p style="color:#666; font-size:12px;">Ad is loading in background</p>
+    <div class="bar-wrap">
+      <div class="bar" id="bar"></div>
+    </div>
+  </div>
+</div>
+
 <script>
 const params = new URLSearchParams(window.location.search);
 const id = params.get('id');
+const total = 5;
+let count = total;
+
 window.open('https://valuedcowboysample.com/bu5fn2mzf?key=89a86749e1df652f7d1d77c5c458f119', '_blank');
-setTimeout(() => {
-  window.location.href = 'watch.html?id=' + id;
-}, 5000);
+
+const numEl = document.getElementById('num');
+const barEl = document.getElementById('bar');
+
+const timer = setInterval(() => {
+  count--;
+  numEl.textContent = count;
+  barEl.style.width = (count / total * 100) + '%';
+  if (count <= 0) {
+    clearInterval(timer);
+    window.location.href = 'watch.html?id=' + id;
+  }
+}, 1000);
 </script>
 </body>
 </html>
