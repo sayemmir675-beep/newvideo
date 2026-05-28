@@ -48,10 +48,7 @@ async function loadVideos() {
 }
 
 function handleClick(id) {
-  window.location.href = AD_URL;
-  setTimeout(() => {
-    window.location.href = 'watch.html?id=' + id;
-  }, 5000);
+  window.location.href = 'go.html?id=' + id;
 }
 
 loadVideos();
