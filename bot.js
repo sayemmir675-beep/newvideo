@@ -1,18 +1,7 @@
 const TelegramBot = require('node-telegram-bot-api');
 const mongoose = require('mongoose');
-require('dotenv').config();
 
-mongoose.connect(process.env.MONGO_URI);
-
-const videoSchema = new mongoose.Schema({
-  title: String,
-  iframe: String,
-  thumbnail: String,
-  views: { type: Number, default: 0 },
-  createdAt: { type: Date, default: Date.now }
-});
-
-const Video = mongoose.model('Video', videoSchema);
+const Video = mongoose.model('Video');
 
 const bot = new TelegramBot(process.env.BOT_TOKEN, { polling: true });
 const ADMIN_ID = parseInt(process.env.ADMIN_ID);
