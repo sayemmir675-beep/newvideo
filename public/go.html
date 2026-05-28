@@ -1,95 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Please wait...</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #0f0f0f; color: #fff; font-family: Arial; }
-
-.popup-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.popup {
-  background: #1a1a1a;
-  border: 2px solid #ff4444;
-  border-radius: 12px;
-  padding: 35px 40px;
-  text-align: center;
-  max-width: 340px;
-  width: 90%;
-}
-
-.popup h2 { color: #ff4444; font-size: 22px; margin-bottom: 10px; }
-.popup p { color: #aaa; font-size: 14px; margin-bottom: 25px; }
-
-.countdown-circle {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: #ff4444;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px;
-  font-size: 36px;
-  font-weight: bold;
-  color: #fff;
-}
-
-.bar-wrap {
-  background: #333;
-  border-radius: 99px;
-  height: 8px;
-  overflow: hidden;
-  margin-top: 15px;
-}
-
-.bar {
-  height: 100%;
-  background: #ff4444;
-  border-radius: 99px;
-  width: 100%;
-  transition: width 1s linear;
-}
-
-.ad-btn {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 10px 25px;
-  background: #ff4444;
-  color: #fff;
-  border-radius: 8px;
-  text-decoration: none;
-  font-size: 14px;
-  cursor: pointer;
-  border: none;
-}
-</style>
-</head>
-<body>
-
-<div class="popup-overlay">
-  <div class="popup">
-    <h2>🎬 Video Loading</h2>
-    <p>Please wait while we prepare your video...</p>
-    <div class="countdown-circle" id="num">5</div>
-    <p style="color:#666; font-size:12px;">Click below if ad didn't open</p>
-    <a class="ad-btn" id="adlink" href="#" target="_blank">Open Ad</a>
-    <div class="bar-wrap">
-      <div class="bar" id="bar"></div>
-    </div>
-  </div>
-</div>
-
 <script>
 const params = new URLSearchParams(window.location.search);
 const id = params.get('id');
@@ -102,19 +10,17 @@ document.getElementById('adlink').href = AD_URL;
 const numEl = document.getElementById('num');
 const barEl = document.getElementById('bar');
 
-// Try to open ad automatically
-window.location.href = AD_URL;
+// Open ad in new tab
+window.open(AD_URL, '_blank');
 
-setTimeout(() => {
-  window.location.href = 'watch.html?id=' + id;
-}, 5000);
-
+// Countdown then redirect to video
 const timer = setInterval(() => {
   count--;
   numEl.textContent = count;
   barEl.style.width = (count / total * 100) + '%';
-  if (count <= 0) clearInterval(timer);
+  if (count <= 0) {
+    clearInterval(timer);
+    window.location.href = 'watch.html?id=' + id;
+  }
 }, 1000);
 </script>
-</body>
-</html>
