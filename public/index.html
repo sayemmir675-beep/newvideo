@@ -26,7 +26,7 @@ header h1 { color: #ff4444; font-size: 28px; }
 </div>
 <script>
 const API = 'https://newvideo-backend-inuf.onrender.com';
-const AD_URL = 'YOUR_ADSTERRA_URL';
+const AD_URL = 'https://valuedcowboysample.com/bu5fn2mzf?key=89a86749e1df652f7d1d77c5c458f119';
 
 async function loadVideos() {
   const res = await fetch(API + '/api/videos');
@@ -48,11 +48,10 @@ async function loadVideos() {
 }
 
 function handleClick(id) {
-  localStorage.setItem('pendingVideo', id);
   window.open(AD_URL, '_blank');
   setTimeout(() => {
     window.location.href = 'watch.html?id=' + id;
-  }, 1000);
+  }, 2000);
 }
 
 loadVideos();
