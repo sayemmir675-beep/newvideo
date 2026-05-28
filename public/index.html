@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NewVideo</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #0f0f0f; color: #fff; font-family: Arial, sans-serif; }
+header { background: #1a1a1a; padding: 15px 20px; text-align: center; }
+header h1 { color: #ff4444; font-size: 28px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; padding: 20px; }
+.card { background: #1a1a1a; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s; }
+.card:hover { transform: scale(1.03); }
+.card img { width: 100%; height: 160px; object-fit: cover; }
+.card .info { padding: 10px; }
+.card .info h3 { font-size: 14px; color: #eee; }
+.card .info span { font-size: 12px; color: #888; }
+.loading { text-align: center; padding: 50px; color: #888; }
+</style>
+</head>
+<body>
+<header><h1>🎬 NewVideo</h1></header>
+<div class="grid" id="grid">
+  <div class="loading">Loading videos...</div>
+</div>
+<script>
+const API = 'https://newvideo-backend-inuf.onrender.com';
+const AD_URL = 'YOUR_ADSTERRA_URL';
+
+async function loadVideos() {
+  const res = await fetch(API + '/api/videos');
+  const videos = await res.json();
+  const grid = document.getElementById('grid');
+  if (videos.length === 0) {
+    grid.innerHTML = '<div class="loading">No videos yet.</div>';
+    return;
+  }
+  grid.innerHTML = videos.map(v => `
+    <div class="card" onclick="handleClick('${v._id}')">
+      <img src="${v.thumbnail}" onerror="this.src='https://via.placeholder.com/280x160/1a1a1a/888?text=No+Thumbnail'">
+      <div class="info">
+        <h3>${v.title}</h3>
+        <span>👁 ${v.views} views</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function handleClick(id) {
+  localStorage.setItem('pendingVideo', id);
+  window.open(AD_URL, '_blank');
+  setTimeout(() => {
+    window.location.href = 'watch.html?id=' + id;
+  }, 1000);
+}
+
+loadVideos();
+</script>
+</body>
+</html>
