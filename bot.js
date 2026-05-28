@@ -56,11 +56,12 @@ bot.on('message', async (msg) => {
   } else if (state.step === 'iframe') {
     waitingFor[chatId] = { step: 'thumbnail', title: state.title, iframe: msg.text };
     bot.sendMessage(chatId, '🖼 Now send the *thumbnail image URL*:', { parse_mode: 'Markdown' });
-  } else if (state.step === 'thumbnail') {
-    const video = new Video({ title: state.title, iframe: state.iframe, thumbnail: msg.text });
-    await video.save();
-    delete waitingFor[chatId];
-    bot.sendMessage(chatId, `✅ Video added!\n\n🎬 *${state.title}*`, { parse_mode: 'Markdown' });
+ } else if (state.step === 'iframe') {
+    let iframeUrl = msg.text;
+    const srcMatch = msg.text.match(/src=["']([^"']+)["']/i);
+    if (srcMatch) iframeUrl = srcMatch[1];
+    waitingFor[chatId] = { step: 'thumbnail', title: state.title, iframe: iframeUrl };
+    bot.sendMessage(chatId, '🖼 Now send the *thumbnail image URL*:', { parse_mode: 'Markdown' });
   } else if (state.step === 'delete_id') {
     try {
       await Video.findByIdAndDelete(msg.text.trim());
