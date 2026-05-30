@@ -32,13 +32,18 @@ bot.onText(/\/add/, (msg) => {
 bot.onText(/\/list/, async (msg) => {
   if (msg.chat.id !== ADMIN_ID) return;
   const Video = getVideo();
-  const videos = await Video.find().sort({ createdAt: -1 }).limit(10);
+  const videos = await Video.find().sort({ createdAt: -1 });
   if (videos.length === 0) return bot.sendMessage(msg.chat.id, 'No videos yet.');
-  let text = '🎬 Last 10 videos:\n\n';
-  videos.forEach((v, i) => {
-    text += `${i + 1}. ${v.title}\nID: \`${v._id}\`\n\n`;
-  });
-  bot.sendMessage(msg.chat.id, text, { parse_mode: 'Markdown' });
+  
+  const chunkSize = 20;
+  for (let i = 0; i < videos.length; i += chunkSize) {
+    const chunk = videos.slice(i, i + chunkSize);
+    let text = `🎬 Videos ${i+1}-${i+chunk.length} of ${videos.length}:\n\n`;
+    chunk.forEach((v, j) => {
+      text += `${i+j+1}. ${v.title}\nID: \`${v._id}\`\n\n`;
+    });
+    await bot.sendMessage(msg.chat.id, text, { parse_mode: 'Markdown' });
+  }
 });
 
 bot.onText(/\/delete/, (msg) => {
