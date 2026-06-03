@@ -9,6 +9,8 @@
 body { background: #0f0f0f; color: #fff; font-family: Arial, sans-serif; }
 header { background: #1a1a1a; padding: 15px 20px; text-align: center; }
 header h1 { color: #ff4444; font-size: 28px; }
+.ad-banner { text-align: center; padding: 10px; background: #111; }
+.ad-native { padding: 10px 20px; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; padding: 20px; }
 .card { background: #1a1a1a; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s; }
 .card:hover { transform: scale(1.03); }
@@ -18,12 +20,46 @@ header h1 { color: #ff4444; font-size: 28px; }
 .card .info span { font-size: 12px; color: #888; }
 .loading { text-align: center; padding: 50px; color: #888; }
 </style>
+<script src="https://valuedcowboysample.com/df/d1/cf/dfd1cf19fd1c64a7a5442af540a2406c.js"></script>
 </head>
 <body>
 <header><h1>🎬 NewVideo</h1></header>
+
+<div class="ad-banner">
+  <script>
+    atOptions = {
+      'key' : '0884225647c7532e6de503eb6348b5bb',
+      'format' : 'iframe',
+      'height' : 60,
+      'width' : 468,
+      'params' : {}
+    };
+  </script>
+  <script src="https://valuedcowboysample.com/0884225647c7532e6de503eb6348b5bb/invoke.js"></script>
+</div>
+
 <div class="grid" id="grid">
   <div class="loading">Loading videos...</div>
 </div>
+
+<div class="ad-native" id="native-ad" style="display:none;">
+  <script async="async" data-cfasync="false" src="https://valuedcowboysample.com/aa99c1456d41d1a9e5d71334af985de3/invoke.js"></script>
+  <div id="container-aa99c1456d41d1a9e5d71334af985de3"></div>
+</div>
+
+<div class="ad-banner" style="margin-top:10px; padding-bottom:20px;">
+  <script>
+    atOptions = {
+      'key' : '0884225647c7532e6de503eb6348b5bb',
+      'format' : 'iframe',
+      'height' : 60,
+      'width' : 468,
+      'params' : {}
+    };
+  </script>
+  <script src="https://valuedcowboysample.com/0884225647c7532e6de503eb6348b5bb/invoke.js"></script>
+</div>
+
 <script>
 const API = 'https://newvideo-backend-inuf.onrender.com';
 const AD_URL = 'https://valuedcowboysample.com/bu5fn2mzf?key=89a86749e1df652f7d1d77c5c458f119';
@@ -36,19 +72,25 @@ async function loadVideos() {
     grid.innerHTML = '<div class="loading">No videos yet.</div>';
     return;
   }
-  grid.innerHTML = videos.map(v => `
-    <div class="card" onclick="handleClick('${v._id}')">
-      <img src="${v.thumbnail}" onerror="this.src='https://via.placeholder.com/280x160/1a1a1a/888?text=No+Thumbnail'">
-      <div class="info">
-        <h3>${v.title}</h3>
-        <span>👁 ${v.views} views</span>
+  let html = '';
+  videos.forEach((v, i) => {
+    html += `
+      <div class="card" onclick="handleClick('${v._id}')">
+        <img src="${v.thumbnail}" onerror="this.src='https://via.placeholder.com/280x160/1a1a1a/888?text=No+Thumbnail'">
+        <div class="info">
+          <h3>${v.title}</h3>
+          <span>👁 ${v.views} views</span>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  });
+  grid.innerHTML = html;
+  if (videos.length > 6) {
+    document.getElementById('native-ad').style.display = 'block';
+  }
 }
 
 function handleClick(id) {
-  sessionStorage.setItem('videoId', id);
   window.location.href = 'go.html?id=' + id;
 }
 
