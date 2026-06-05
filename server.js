@@ -51,6 +51,34 @@ app.delete('/api/videos/:id', async (req, res) => {
   res.json({ message: 'Deleted' });
 });
 
+app.get('/sitemap.xml', async (req, res) => {
+  const videos = await Video.find().sort({ createdAt: -1 });
+  let urls = `
+  <url>
+    <loc>https://newvideo.me/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>`;
+  
+  videos.forEach(v => {
+    urls += `
+  <url>
+    <loc>https://newvideo.me/watch.html?id=${v._id}</loc>
+    <lastmod>${new Date(v.createdAt).toISOString().split('T')[0]}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+  });
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls}
+</urlset>`;
+
+  res.header('Content-Type', 'application/xml');
+  res.send(xml);
+});
+
 app.get('/api/stats', async (req, res) => {
   const total = await Video.countDocuments();
   const views = await Video.aggregate([{ $group: { _id: null, total: { $sum: '$views' } } }]);
