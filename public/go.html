@@ -5,7 +5,11 @@
 <title>Please wait...</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { background: #0f0f0f; color: #fff; font-family: Arial; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+body { background: #0f0f0f; color: #fff; font-family: Arial; }
+
+.ad-banner { text-align: center; padding: 10px; background: #111; }
+
+.wrap { display: flex; align-items: center; justify-content: center; min-height: 80vh; }
 
 .popup {
   background: #1a1a1a;
@@ -64,23 +68,50 @@ body { background: #0f0f0f; color: #fff; font-family: Arial; display: flex; alig
 }
 
 #countdown-section { display: none; }
+
+.ad-bottom { padding: 15px 20px 30px; text-align: center; }
 </style>
+<!-- Social Bar -->
+<script src="https://valuedcowboysample.com/df/d1/cf/dfd1cf19fd1c64a7a5442af540a2406c.js"></script>
 </head>
 <body>
-<div class="popup">
-  <div id="click-section">
-    <h2>🎬 Video Ready!</h2>
-    <p>Click the button below to watch the video</p>
-    <button class="btn" onclick="startAd()">▶ Watch Now</button>
-  </div>
-  <div id="countdown-section">
-    <h2>🎬 Loading Video...</h2>
-    <p>Please wait...</p>
-    <div class="countdown-circle" id="num">5</div>
-    <div class="bar-wrap">
-      <div class="bar" id="bar"></div>
+
+<!-- Banner Ad Top -->
+<div class="ad-banner">
+  <script>
+    atOptions = {
+      'key' : '0884225647c7532e6de503eb6348b5bb',
+      'format' : 'iframe',
+      'height' : 60,
+      'width' : 468,
+      'params' : {}
+    };
+  </script>
+  <script src="https://valuedcowboysample.com/0884225647c7532e6de503eb6348b5bb/invoke.js"></script>
+</div>
+
+<div class="wrap">
+  <div class="popup">
+    <div id="click-section">
+      <h2>🎬 Video Ready!</h2>
+      <p>Click the button below to watch the video</p>
+      <button class="btn" onclick="startAd()">▶ Watch Now</button>
+    </div>
+    <div id="countdown-section">
+      <h2>🎬 Loading Video...</h2>
+      <p>Please wait...</p>
+      <div class="countdown-circle" id="num">5</div>
+      <div class="bar-wrap">
+        <div class="bar" id="bar"></div>
+      </div>
     </div>
   </div>
+</div>
+
+<!-- Native Banner Bottom -->
+<div class="ad-bottom">
+  <script async="async" data-cfasync="false" src="https://valuedcowboysample.com/aa99c1456d41d1a9e5d71334af985de3/invoke.js"></script>
+  <div id="container-aa99c1456d41d1a9e5d71334af985de3"></div>
 </div>
 
 <script>
@@ -92,7 +123,7 @@ function startAd() {
   document.getElementById('click-section').style.display = 'none';
   document.getElementById('countdown-section').style.display = 'block';
   window.open(AD_URL, '_blank');
-  
+
   const total = 5;
   let count = total;
   const numEl = document.getElementById('num');
